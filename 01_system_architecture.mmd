@@ -1,0 +1,29 @@
+flowchart TB
+    C[Customer App<br/>Scan → Cart → Payment → Receipt]
+    S[Staff Dashboard<br/>Operations Command Center]
+
+    API[FastAPI Backend<br/>Modular REST API]
+    DB[(PostgreSQL Database)]
+    EVT[Event / Job Processing]
+
+    DEM[Demand Forecasting]
+    CON[Congestion Prediction]
+    INV[Inventory Intelligence]
+
+    DEC[Decision Engine<br/>What should the store do next?]
+    AG[Operations Agent<br/>Advanced Layer]
+
+    C --> API
+    S --> API
+    API --> DB
+    API --> EVT
+    EVT --> DEM
+    EVT --> CON
+    EVT --> INV
+    DEM --> DEC
+    CON --> DEC
+    INV --> DEC
+    DEC --> S
+    DEC --> AG
+    AG --> API
+    AG --> S

@@ -1,0 +1,16 @@
+flowchart TD
+    T[Completed transactions] --> D[(Historical transaction data)]
+    D --> F[Demand Forecasting]
+    F --> P[Predicted demand by product<br/>time + day + context]
+    P --> S[Compare predicted demand<br/>with current inventory]
+    S --> R{Stockout / low-stock risk?}
+    R -->|No| N[No action]
+    R -->|Yes| A[Generate restock recommendation]
+    P --> C{Cold-stock demand rising?}
+    C -->|No| N2[No refrigeration action]
+    C -->|Yes| H[Recommend moving stock<br/>into refrigeration]
+    A --> SD[Staff Dashboard]
+    H --> SD
+    SD --> X[Staff action]
+    X --> O[Outcome recorded]
+    O --> D

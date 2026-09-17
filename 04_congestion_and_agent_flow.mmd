@@ -1,0 +1,40 @@
+flowchart TD
+    A[Store signals]
+    A1[Customer arrivals]
+    A2[Queue state]
+    A3[Transaction / service times]
+    A4[Scan-and-go usage]
+    A5[Time + day + historical patterns]
+
+    A --> D[Store State]
+    A1 --> D
+    A2 --> D
+    A3 --> D
+    A4 --> D
+    A5 --> D
+
+    D --> C[Congestion Prediction]
+    D --> F[Demand Forecast]
+    D --> I[Inventory Status]
+
+    C --> P[Predicted congestion / wait]
+    F --> Q[Predicted product demand]
+    I --> R[Stockout risk]
+
+    P --> E[Decision Engine]
+    Q --> E
+    R --> E
+
+    E --> W[Recommended actions]
+    W --> W1[Promote / route customers to Scan-and-Go]
+    W --> W2[Prepare assisted checkout]
+    W --> W3[Restock products]
+    W --> W4[Prepare cold stock]
+
+    W --> H[Staff Dashboard]
+    H --> G{Advanced: Operations Agent}
+    G --> T[Call approved tools / APIs]
+    T --> H
+    H --> M[Action taken]
+    M --> Z[Measure outcome]
+    Z --> D
