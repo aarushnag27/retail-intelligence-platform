@@ -1,0 +1,38 @@
+flowchart TD
+    A[Current Store State] --> D[Decision Engine]
+    B[Congestion Prediction] --> D
+    C[Customer / Product Demand Forecasts] --> D
+    E[Inventory Status] --> D
+    F[Operational Rules & Constraints] --> D
+    G[Staff / Checkout Availability] --> D
+
+    D --> H[Generate Candidate Actions]
+
+    H --> I[Evaluate Expected Impact]
+    I --> J[Apply Constraints]
+    J --> K[Prioritize Actions]
+
+    K --> L[Recommended Action Plan]
+
+    L --> M[Staff Dashboard]
+    L --> N[Operations Agent - Later]
+
+    M --> O[Staff Action]
+    N --> P[Approved Tool / API Action]
+
+    O --> Q[Outcome]
+    P --> Q
+
+    Q --> R[Measure Actual Result]
+    R --> S[Update Store State]
+    S --> D
+
+    D --> T[Example: Prepare Assisted Checkout]
+    D --> U[Example: Restock High-Demand Product]
+    D --> V[Example: Promote Scan-and-Go]
+    D --> W[Example: Prepare Cold Stock]
+
+    T --> K
+    U --> K
+    V --> K
+    W --> K

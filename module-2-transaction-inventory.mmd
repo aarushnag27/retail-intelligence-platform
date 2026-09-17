@@ -1,0 +1,29 @@
+flowchart TD
+    A[Customer scans product] --> B[Create / update cart]
+    B --> C[Check available inventory]
+    C --> D[Reserve requested quantity]
+    D --> E[Checkout]
+
+    E --> F[Create payment attempt]
+    F --> G{Payment status}
+
+    G -->|Success| H[Confirm transaction]
+    H --> I[Convert reservation to SOLD]
+    I --> J[Update inventory]
+    J --> K[Generate receipt]
+    J --> L[Create inventory event]
+    L --> M[Check stock threshold]
+    M --> N{Below threshold?}
+    N -->|Yes| O[Create low-stock alert]
+    N -->|No| P[No alert]
+
+    G -->|Failed| Q[Release reservation]
+    Q --> R[Return stock to AVAILABLE]
+
+    G -->|Expired / Cancelled| S[Release reservation]
+    S --> R
+
+    F --> T[Idempotency check]
+    T --> U{Already processed?}
+    U -->|Yes| V[Return existing transaction result]
+    U -->|No| F

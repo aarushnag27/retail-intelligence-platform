@@ -1,0 +1,41 @@
+flowchart TD
+    A[Store State] --> B[Operations Agent]
+    C[Congestion Forecast] --> B
+    D[Demand Forecast] --> B
+    E[Inventory Status] --> B
+    F[Recent Events] --> B
+
+    B --> G[Select Required Tools]
+    G --> T1[get_store_state()]
+    G --> T2[get_congestion_forecast()]
+    G --> T3[get_demand_forecast()]
+    G --> T4[get_inventory_status()]
+    G --> T5[get_recent_events()]
+
+    T1 --> H[Agent Reasoning]
+    T2 --> H
+    T3 --> H
+    T4 --> H
+    T5 --> H
+
+    H --> I[Generate Action Plan]
+
+    I --> J{Action Risk / Authority}
+    J -->|Low-risk| K[Execute Approved Tool / API]
+    J -->|Higher-impact| L[Send Recommendation for Staff Approval]
+    J -->|Critical Transaction| M[Deterministic Backend Only]
+
+    K --> N[Operational Action]
+    L --> O{Staff approves?}
+    O -->|Yes| N
+    O -->|No| P[Reject / Modify Action]
+
+    M --> Q[Transaction System]
+    N --> R[Outcome Recorded]
+    Q --> R
+    P --> R
+
+    R --> S[Updated Store State]
+    S --> B
+
+    B --> U[Staff Dashboard]

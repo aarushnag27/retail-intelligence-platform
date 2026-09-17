@@ -1,0 +1,59 @@
+flowchart TD
+    A[Customer Actions]
+    B[Staff Actions]
+    C[Transaction Events]
+    D[Inventory Events]
+    E[Contextual Signals]
+
+    A --> F[Operational Event Layer]
+    B --> F
+    C --> F
+    D --> F
+    E --> F
+
+    F --> G[Current Store State]
+
+    G --> H[Customer Flow]
+    G --> I[Checkout State]
+    G --> J[Inventory State]
+    G --> K[Context / Historical State]
+
+    H --> L[Recent arrival rate]
+    H --> M[Active sessions]
+    H --> N[Scan-and-Go usage]
+
+    I --> O[Active assisted stations]
+    I --> P[Queue estimate]
+    I --> Q[Service times]
+    I --> R[Completed transactions]
+
+    J --> S[Available stock]
+    J --> T[Reserved stock]
+    J --> U[Low-stock items]
+    J --> V[Recent sales]
+
+    K --> W[Time / Day]
+    K --> X[Historical patterns]
+    K --> Y[Optional events / holidays]
+
+    L --> Z[Intelligence Layer]
+    M --> Z
+    N --> Z
+    O --> Z
+    P --> Z
+    Q --> Z
+    R --> Z
+    S --> Z
+    T --> Z
+    U --> Z
+    V --> Z
+    W --> Z
+    X --> Z
+    Y --> Z
+
+    Z --> AA[Predictions]
+    AA --> AB[Decision Engine]
+    AB --> AC[Staff Dashboard]
+    AB --> AD[Operational Actions]
+    AD --> AE[New Events]
+    AE --> F

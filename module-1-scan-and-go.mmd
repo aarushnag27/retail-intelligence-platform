@@ -1,0 +1,29 @@
+flowchart TD
+    A[Customer enters store] --> B[Start Scan-and-Go session]
+    B --> C[Scan product QR / barcode]
+    C --> D[Backend validates product + stock]
+    D --> E[Reserve stock]
+    E --> F[Add item to cart]
+
+    F --> G{Continue shopping?}
+    G -->|Yes| C
+    G -->|No| H[Checkout]
+
+    H --> I[Mock / Sandbox payment]
+    I --> J{Payment status}
+
+    J -->|Failed| K[Release reservation]
+    K --> L[Show payment failure / retry]
+
+    J -->|Expired / Cancelled| M[Release reservation]
+    M --> L
+
+    J -->|Success| N[Confirm transaction]
+    N --> O[Convert reservation to sale]
+    O --> P[Update inventory]
+    P --> Q[Generate digital receipt]
+    Q --> R[Exit verification]
+
+    R --> S{Receipt valid?}
+    S -->|Yes| T[Customer exits]
+    S -->|No| U[Assisted verification]

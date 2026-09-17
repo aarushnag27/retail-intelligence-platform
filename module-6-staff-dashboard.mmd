@@ -1,0 +1,43 @@
+flowchart TD
+    A[Current Store State] --> D[Staff Operations Dashboard]
+    B[Congestion Forecast] --> D
+    C[Product Demand Forecast] --> D
+    E[Inventory Alerts] --> D
+    F[Decision Engine Recommendations] --> D
+
+    D --> G[Current Store Overview]
+    D --> H[Upcoming Events / Forecasts]
+    D --> I[Prioritized Actions]
+    D --> J[Historical Analytics]
+
+    G --> G1[Traffic]
+    G --> G2[Congestion Risk]
+    G --> G3[Estimated Queue]
+    G --> G4[Scan-and-Go Usage]
+    G --> G5[Active Assisted Checkout]
+
+    H --> H1[Predicted Congestion]
+    H --> H2[Expected Customer Demand]
+    H --> H3[Expected High-Demand Products]
+
+    I --> I1[Prepare Assisted Checkout]
+    I --> I2[Promote Scan-and-Go]
+    I --> I3[Restock Product]
+    I --> I4[Prepare Cold Stock]
+
+    I1 --> K[Staff Action]
+    I2 --> K
+    I3 --> K
+    I4 --> K
+
+    K --> L[Mark / Record Action]
+    L --> M[Outcome Event]
+    M --> N[Updated Store State]
+    N --> A
+
+    J --> J1[Peak Periods]
+    J --> J2[Average Waiting Time]
+    J --> J3[Scan-and-Go Adoption]
+    J --> J4[Transaction Volume]
+    J --> J5[Top-Selling Products]
+    J --> J6[Prediction / Action Performance]

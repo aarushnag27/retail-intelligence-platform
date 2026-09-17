@@ -1,0 +1,33 @@
+flowchart TD
+    A[Historical Store Events] --> E[Feature Construction]
+    B[Current Store State] --> E
+    C[Context Signals] --> E
+
+    E --> D1[Customer Demand / Arrival Forecast]
+    E --> D2[Congestion Forecast]
+    E --> D3[Product Demand Forecast]
+
+    D1 --> O1[Expected arrivals / activity]
+    D2 --> O2[Expected queue / waiting time / congestion risk]
+    D3 --> O3[Expected demand by product / stockout risk]
+
+    O1 --> R[Prediction Outputs]
+    O2 --> R
+    O3 --> R
+
+    R --> X[Decision Engine]
+
+    X --> Y[Recommended actions]
+
+    Y --> Z[Store Action]
+    Z --> M[Observed Outcome]
+
+    M --> E
+
+    D1 -.-> B1[Compare against simple baseline]
+    D2 -.-> B2[Compare against queueing / simulation baseline]
+    D3 -.-> B3[Compare against historical-demand baseline]
+
+    B1 --> V[Model Evaluation]
+    B2 --> V
+    B3 --> V
