@@ -1,4 +1,4 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, PositiveInt
 
 
 class ProductCreate(BaseModel):
@@ -10,7 +10,7 @@ class ProductCreate(BaseModel):
 
 class CartItem(BaseModel):
     product_id: int
-    quantity:int
+    quantity:PositiveInt
 
 class CheckoutRequest(BaseModel):
     items: list[CartItem]

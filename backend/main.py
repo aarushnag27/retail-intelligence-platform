@@ -48,35 +48,46 @@ def get_product_id(id: int, db:Session=Depends(get_db)):
 @app.post("/checkout")
 def checkout(request:CheckoutRequest, db:Session=Depends(get_db)):
     total=0
-    for item in request.items:
-        product=db.query(models.Product).filter(models.Product.id == item.product_id).first()
-        if product is None:
-            raise HTTPException(status_code=404, detail="404 not found")
+    try:
+        for item in request.items:
+            product=db.query(models.Product).filter(models.Product.id == item.product_id).first()
+            if product is None:
+                raise HTTPException(status_code=404, detail="404 not found")
 
-        if product.stock<item.quantity:
-              raise HTTPException(status_code=400, detail="Not enough stock")
-        total+=item.quantity*product.price
+            if product.stock<item.quantity:
+                raise HTTPException(status_code=400, detail="Not enough stock")
+            total+=item.quantity*product.price
 
-    transaction=models.Transaction(
-        total=total,
-        sold_at=datetime.now()
-        )
-    db.add(transaction)
-    db.flush()
+        transaction=models.Transaction(
+            total=total,
+            sold_at=datetime.now()
+            )
+        db.add(transaction)
+        db.flush()
 
-    for item in request.items:
-        product=db.query(models.Product).filter(models.Product.id == item.product_id).first()
-        transaction_item=models.TransactionItem(
-            transaction_id=transaction.transaction_id,
-            product_id=product.id,
-            quantity=item.quantity,
-            price=product.price
-        )
-        db.add(transaction_item)
-        product.stock-=item.quantity
-    db.commit()
-       
+        for item in request.items:
+            product=db.query(models.Product).filter(models.Product.id == item.product_id).first()
+            transaction_item=models.TransactionItem(
+                transaction_id=transaction.transaction_id,
+                product_id=product.id,
+                quantity=item.quantity,
+                price=product.price
+            )
+            db.add(transaction_item)
+            product.stock-=item.quantity
+        db.commit()
+        return{
+            "message": "Transaction Successful",
+            "Transaction Id": transaction.transaction_id,
+            "Total": total
+
+        }
+
+    except Exception:
+        db.rollback()
+        raise
         
+            
 
         
 
