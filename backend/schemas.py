@@ -14,3 +14,9 @@ class CartItem(BaseModel):
 
 class CheckoutRequest(BaseModel):
     items: list[CartItem]
+
+class InventoryResponse(BaseModel):
+    id: int
+    name: str
+    stock: int
+    status: str

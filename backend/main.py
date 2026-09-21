@@ -2,8 +2,9 @@ from fastapi import FastAPI, Depends, HTTPException
 from sqlalchemy.orm import Session
 from database import engine, Base, get_db
 import models
-from schemas import ProductCreate, CheckoutRequest
+from schemas import ProductCreate, CheckoutRequest, InventoryResponse
 from datetime import datetime
+LOW_STOCK_THRESHOLD = 5
 
 app = FastAPI()
 
@@ -86,6 +87,32 @@ def checkout(request:CheckoutRequest, db:Session=Depends(get_db)):
     except Exception:
         db.rollback()
         raise
+
+@app.get("/inventory",response_model=list[InventoryResponse])
+def get_inventory(db:Session=Depends(get_db)):
+    result=[]
+    inventory=db.query(
+        models.Product.id,
+        models.Product.name,
+        models.Product.stock
+        ).all()
+    for item in inventory:
+        if item.stock<=LOW_STOCK_THRESHOLD:
+            status="LOW"
+        else:
+            status="OK"
+
+        inventory_item=InventoryResponse(
+            id=item.id,
+            name=item.name,
+            stock=item.stock,
+            status=status
+        )
+        result.append(inventory_item)
+    return result
+    
+    
+    
         
             
 
