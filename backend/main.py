@@ -1,4 +1,5 @@
 from fastapi import FastAPI, Depends, HTTPException
+from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.orm import Session
 from database import engine, Base, get_db
 import models
@@ -7,6 +8,10 @@ from datetime import datetime
 LOW_STOCK_THRESHOLD = 5
 
 app = FastAPI()
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://localhost:5173"]
+)
 
 Base.metadata.create_all(bind=engine)
 
