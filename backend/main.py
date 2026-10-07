@@ -10,9 +10,10 @@ LOW_STOCK_THRESHOLD = 5
 app = FastAPI()
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:5173"]
+    allow_origins=["http://localhost:5173"],
+    allow_methods=["*"],
+    allow_headers=["*"]
 )
-
 Base.metadata.create_all(bind=engine)
 
 

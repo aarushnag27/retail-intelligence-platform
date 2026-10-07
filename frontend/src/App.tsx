@@ -91,6 +91,30 @@ function getProduct(productId: number) {
   return products.find(product => product.id === productId)
 }
 
+async function checkout() {
+  const response = await fetch("http://127.0.0.1:8000/checkout", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({
+      items: cart
+    })
+  })
+
+  const data = await response.json()
+
+  console.log(data)
+
+  const productsResponse = await fetch(
+    "http://127.0.0.1:8000/products"
+  )
+
+  const updatedProducts = await productsResponse.json()
+
+  setProducts(updatedProducts)
+}
+
 const cartTotal = cart.reduce((total, item) => {
   const product = getProduct(item.product_id)
 
@@ -145,6 +169,10 @@ const cartTotal = cart.reduce((total, item) => {
   )
 })}
 <p>Cart Total: ₹{cartTotal}</p>
+
+<button onClick={checkout}>
+  Checkout
+</button>
 
 
   </div>
