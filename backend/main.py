@@ -14,6 +14,7 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"]
 )
+
 Base.metadata.create_all(bind=engine)
 
 
@@ -54,6 +55,11 @@ def get_product_id(id: int, db:Session=Depends(get_db)):
 
 @app.post("/checkout")
 def checkout(request:CheckoutRequest, db:Session=Depends(get_db)):
+    if not request.items:
+        raise HTTPException(
+            status_code=400,
+            detail="Cart is empty"
+    )
     total=0
     try:
         for item in request.items:
@@ -85,8 +91,8 @@ def checkout(request:CheckoutRequest, db:Session=Depends(get_db)):
         db.commit()
         return{
             "message": "Transaction Successful",
-            "Transaction Id": transaction.transaction_id,
-            "Total": total
+            "transaction_id": transaction.transaction_id,
+            "total": total
 
         }
 

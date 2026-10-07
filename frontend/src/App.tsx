@@ -19,6 +19,7 @@ function App() {
 }, [])
 const [products, setProducts] = useState<Product[]>([])
 const [cart, setCart] = useState([])
+const [checkoutMessage, setCheckoutMessage] = useState("")
 
 function addToCart(productId: number) {
   const product = products.find(product => product.id === productId)
@@ -92,6 +93,7 @@ function getProduct(productId: number) {
 }
 
 async function checkout() {
+  setCheckoutMessage("")
   const response = await fetch("http://127.0.0.1:8000/checkout", {
     method: "POST",
     headers: {
@@ -101,10 +103,17 @@ async function checkout() {
       items: cart
     })
   })
+  if (!response.ok) {
+  const errorData = await response.json()
+  setCheckoutMessage(errorData.detail)
+  return
+}
 
   const data = await response.json()
 
-  console.log(data)
+  setCheckoutMessage(
+  `${data.message} — Transaction #${data.transaction_id} — ₹${data.total}`
+)
 
   const productsResponse = await fetch(
     "http://127.0.0.1:8000/products"
@@ -173,6 +182,7 @@ const cartTotal = cart.reduce((total, item) => {
 <button onClick={checkout}>
   Checkout
 </button>
+{checkoutMessage && <p>{checkoutMessage}</p>}
 
 
   </div>
