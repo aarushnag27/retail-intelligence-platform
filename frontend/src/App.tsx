@@ -113,7 +113,13 @@ async function checkout() {
 
   setCheckoutMessage(
   `${data.message} — Transaction #${data.transaction_id} — ₹${data.total}`
+  
 )
+setCheckoutMessage(
+  `${data.message} — Transaction #${data.transaction_id} — ₹${data.total}`
+)
+setCart([])
+
 
   const productsResponse = await fetch(
     "http://127.0.0.1:8000/products"
