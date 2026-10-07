@@ -18,7 +18,8 @@ function App() {
   .then(data => setProducts(data))
 }, [])
 const [products, setProducts] = useState<Product[]>([])
-const [cart, setCart] = useState([])
+const [cart, setCart] = useState<CartItem[]>([])
+const [stockMessages, setStockMessages] = useState<Record<number, string>>({})
 const [checkoutMessage, setCheckoutMessage] = useState("")
 
 function addToCart(productId: number) {
@@ -27,6 +28,14 @@ function addToCart(productId: number) {
   if (!product) {
     return
   }
+
+  const cartItem = cart.find(item => item.product_id === productId)
+  setStockMessages(currentMessages => ({
+    ...currentMessages,
+    [productId]: (cartItem ? cartItem.quantity >= product.stock : product.stock === 0)
+      ? "Not enough stock — can't add the product."
+      : ""
+  }))
 
   setCart(currentCart => {
     const existingItem = currentCart.find(
@@ -65,6 +74,14 @@ function updateQuantity(productId: number, change: number) {
   if (!product) {
     return
   }
+
+  const cartItem = cart.find(item => item.product_id === productId)
+  setStockMessages(currentMessages => ({
+    ...currentMessages,
+    [productId]: cartItem && cartItem.quantity + change > product.stock
+      ? "Not enough stock — can't add the product."
+      : ""
+  }))
 
   setCart(currentCart => {
     return currentCart
@@ -147,12 +164,15 @@ const cartTotal = cart.reduce((total, item) => {
     {products.map(product => (
       <div key={product.id}>
         <p>
-          {product.name} - ₹{product.price} - Stock: {product.stock}
+          {product.name} - ₹{product.price}
         </p>
 
         <button onClick={() => addToCart(product.id)}>
           Add to Cart
         </button>
+        {stockMessages[product.id] && (
+          <p role="status">{stockMessages[product.id]}</p>
+        )}
       </div>
     ))}
 
