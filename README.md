@@ -2,7 +2,9 @@
 
 A full-stack retail operations and intelligence platform designed to help stores move beyond basic transaction and inventory tracking toward data-driven demand forecasting and operational decision-making.
 
-**Status:** In Progress. The retail foundation and a synthetic sales-data pipeline are working; the intelligence layer is being built on top, starting with sales analytics. See the [Roadmap](#roadmap).
+**Status:** In Progress. The retail foundation and synthetic sales-data pipeline are working; the intelligence layer is being built on top, starting with sales analytics.
+
+**Stack:** React · TypeScript · Vite · FastAPI · SQLAlchemy · PostgreSQL
 
 ## Problem
 
@@ -10,7 +12,7 @@ Retail stores often rely on current inventory levels and historical sales record
 
 - Popular products running out during periods of heavy demand.
 - Low-stock items not being identified early enough.
-- Inventory decisions made without considering when demand is expected to peak.
+- Inventory decisions being made without considering when demand is expected to peak.
 - Staff reacting to stock problems after they occur instead of anticipating them.
 
 ## Solution
@@ -19,7 +21,9 @@ The platform is built around turning raw retail activity into an operational fee
 
 **Observe → Predict → Decide → Act → Measure → Learn**
 
-It combines transaction history, inventory state, time-based demand patterns, and forecasting to identify upcoming risks and recommend operational actions. The current system provides the transactional and inventory foundation for this approach, and the intelligence layer is being developed on top of it.
+It combines transaction history, inventory state, time-based demand patterns, and forecasting to identify upcoming risks and recommend operational actions.
+
+The current system provides the transactional and inventory foundation for this approach, while the intelligence layer is being developed on top of it.
 
 ## Current Status
 
@@ -35,147 +39,221 @@ It combines transaction history, inventory state, time-based demand patterns, an
 | Decision engine | Planned |
 | Operations assistant | Planned |
 
+## Screenshots
+
+Screenshots will be added as the customer and staff interfaces are polished.
+
 ## Features
 
-**Customer side**
-- Product browsing, cart management, and checkout
+### Customer
 
-**Staff side**
-- Inventory visibility with status and low-stock detection
-- Transaction history showing each sale with its individual products
+- Product browsing
+- Cart management with quantity controls
+- Checkout
 
-**Backend**
+### Staff
+
+- Inventory visibility
+- Low-stock detection
+- Transaction history
+
+### Backend
+
 - Product management and lookup
-- Transactional checkout: stock validation, transaction creation, transaction-item persistence, and inventory deduction succeed or fail together
-- Database rollback on checkout errors, so a failed checkout never leaves stock or transactions half-updated
-- Transaction history retrieval, returning transactions with their items and product information
+- Transactional checkout
+- Stock validation and inventory deduction
+- Transaction history retrieval
+- Synthetic historical sales-data generation
 
 ## How It Works
 
-The application is split into customer and staff workflows that share one backend and database.
+The application follows a simple full-stack architecture:
+
+```mermaid
+flowchart TD
+    Customer --> Frontend
+    Staff --> Frontend
+    Frontend --> FastAPI
+    FastAPI --> SQLAlchemy
+    SQLAlchemy --> PostgreSQL
+```
+
+The intelligence layer is being built on top of the transactional data:
 
 ```mermaid
 flowchart LR
-    U[Customer / Staff] --> R[React + TypeScript]
-    R -- REST API --> F[FastAPI]
-    F -- SQLAlchemy --> P[(PostgreSQL)]
-    G[Synthetic Sales<br/>Data Pipeline] --> P
+    Transactions["Transactions + Inventory"] --> Analytics["Sales Analytics"]
+    Analytics --> Forecasting["Demand Forecasting"]
+    Forecasting --> Decisions["Decision Engine"]
+    Decisions --> Assistant["Operations Assistant"]
 ```
 
-The intelligence layer is planned as a pipeline on top of the same data:
+**Built today:** Customer and staff workflows, transactional checkout, inventory management, transaction history, and synthetic historical sales data.
 
-```mermaid
-flowchart LR
-    A[Checkout] --> B[Transactions & Inventory]
-    B --> C[Sales Analytics]
-    C --> D[Demand Forecasting]
-    D --> E[Decision Engine]
-    E --> F[Operations Assistant]
-```
-
-**Built today:** Checkout → Transactions & Inventory, plus the synthetic data feeding the same database.
-**In development / planned:** Sales Analytics → Demand Forecasting → Decision Engine → Operations Assistant.
+**In development / planned:** Sales analytics → Demand forecasting → Decision engine → Operations assistant.
 
 ## Data Model
 
-A sale is stored at two levels so the system can answer both "what was the total?" and "what exactly was sold?":
+The core data model consists of:
 
-- **Transaction:** one complete sale, with its total and timestamp.
-- **Transaction item:** one product line within a sale, with the product, quantity, and sale price at the time.
+- **Products** — product information and current inventory.
+- **Transactions** — completed sales with totals and timestamps.
+- **Transaction Items** — products, quantities, and sale prices belonging to each transaction.
 
-This separation keeps transaction history readable and makes product-level analysis, such as demand per product over time, straightforward. Products and their inventory levels are the other core entities.
+```mermaid
+erDiagram
+    TRANSACTIONS ||--o{ TRANSACTION_ITEMS : contains
+    PRODUCTS ||--o{ TRANSACTION_ITEMS : sold_as
+```
+
+This structure supports both transaction-level reporting and product-level sales analysis.
 
 ## Synthetic Sales Data
 
-Forecasting needs a meaningful history, which a new system doesn't have. The project includes a pipeline that generates realistic sales data and stores it in PostgreSQL. It models:
+A new retail system does not have enough historical data to develop forecasting immediately. The project therefore includes a synthetic sales-data pipeline for development and testing.
+
+The generated data models:
 
 - Different product demand levels
 - Product-specific demand behavior
 - Day-to-day variation
-- Time-of-day patterns, including stronger evening and night demand
+- Time-of-day patterns
+- Stronger evening and night demand for relevant products
+- Variable transaction basket sizes
 
-> **Note:** This data is synthetic. It exists to develop and test sales analysis and forecasting, and does not represent a real store.
+> **Note:** This data is synthetic. It is used to develop and test sales analytics and forecasting and does not represent a real store.
 
-## Tech Stack
+## Technology Stack
 
 | Layer | Technology |
 |---|---|
-| Frontend | React, TypeScript |
+| Frontend | React, TypeScript, Vite |
 | Backend | Python, FastAPI, Uvicorn |
 | ORM | SQLAlchemy |
 | Database | PostgreSQL |
 | Communication | REST APIs |
+| Development | Git, GitHub, VS Code |
 
 ## Getting Started
 
-> Update the commands below to match your repository's actual folder names and scripts.
+### Prerequisites
 
-**Prerequisites:** Python 3.10+, Node.js and npm, PostgreSQL
+- Python 3.10+
+- Node.js and npm
+- PostgreSQL
+- An empty PostgreSQL database, such as `retail_intelligence`
 
-```bash
-# 1. Clone
-git clone https://github.com/<your-username>/<repo-name>.git
-cd <repo-name>
+### Backend
 
-# 2. Create the database
-createdb retail_platform
+From the project root:
 
-# 3. Backend
+```powershell
 cd backend
-python -m venv venv
-source venv/bin/activate        # Windows: venv\Scripts\activate
+python -m venv .venv
+.\.venv\Scripts\Activate.ps1
+```
+
+Install dependencies:
+
+```powershell
 pip install -r requirements.txt
 ```
 
 Create `backend/.env`:
 
-```env
-DATABASE_URL=postgresql://<user>:<password>@localhost:5432/retail_platform
+```text
+DB_USER=your_user
+DB_PASSWORD=your_password
+DB_HOST=localhost
+DB_PORT=5432
+DB_NAME=retail_intelligence
 ```
 
-```bash
-uvicorn app.main:app --reload
+Start the backend:
 
-# 4. Frontend (new terminal)
+```powershell
+uvicorn main:app --reload
+```
+
+API:
+
+```text
+http://localhost:8000
+```
+
+Swagger documentation:
+
+```text
+http://localhost:8000/docs
+```
+
+### Frontend
+
+In a separate terminal:
+
+```powershell
 cd frontend
 npm install
 npm run dev
-
-# 5. Optional: generate synthetic sales data
-python scripts/generate_sales_data.py
 ```
 
-**API docs:** with the backend running, open Swagger UI at `http://localhost:8000/docs`.
+### Synthetic Demo Data
+
+From the project root:
+
+```powershell
+backend\.venv\Scripts\python.exe backend\seed_demo_data.py --write --seed 42 --days 30
+```
+
+The generated sales data is stored in PostgreSQL and is used to develop the sales analytics and future forecasting components.
 
 ## Roadmap
 
-**Done**
-- [x] Customer workflow: browse, cart, checkout
-- [x] Staff workflow: inventory visibility and transaction history
-- [x] Transactional checkout with stock validation and rollback
-- [x] Transaction / transaction-item data model
-- [x] Low-stock detection
-- [x] Synthetic historical sales-data pipeline
+### In Progress
 
-**In progress**
-- [ ] Sales analytics (demand patterns by product and time of day)
+- [ ] Sales analytics
+- [ ] Demand pattern analysis by product and time of day
 
-**Planned**
+### Up Next
+
 - [ ] Demand forecasting
 - [ ] Stockout-risk identification based on predicted demand
 - [ ] Decision engine recommending inventory actions
-- [ ] Operations assistant for questions like which products will be needed, which inventory risks need attention, and what to prioritize now
+
+### Later
+
+- [ ] Operations assistant for operational questions and priorities
 - [ ] Operational context, such as immediately available stock versus back-stock
-- [ ] Feedback loop that measures whether recommendations were useful and improves them
+- [ ] Feedback loop to evaluate whether recommendations were useful
 
 ## Design Decisions
 
-- **Transactions and items are separate.** Totals and timestamps live apart from product lines, which keeps history readable and per-product analysis simple.
-- **Checkout is transactional.** Validation, record creation, and inventory deduction succeed or fail together, with rollback on error, so inventory never drifts from sales.
-- **Synthetic data comes first.** Building the data pipeline before the models lets forecasting be developed without waiting for real sales history.
-- **Intelligence is layered.** Analytics, forecasting, decisions, and the assistant are separate stages that can be built and tested one at a time.
+- **Transactional foundation first.** The project establishes reliable transaction and inventory data before building intelligence on top of it.
+- **Synthetic data before forecasting.** A controlled historical dataset allows analytics and forecasting to be developed without waiting for real store data.
+- **Layered intelligence.** Analytics, forecasting, decisions, and the operations assistant are separate stages so each can be developed and evaluated independently.
+
+## Project Structure
+
+```text
+retail-intelligence-platform/
+├── backend/
+│   ├── main.py
+│   ├── database.py
+│   ├── models.py
+│   ├── schemas.py
+│   └── seed_demo_data.py
+├── frontend/
+│   └── src/
+├── docs/
+│   └── architecture/
+├── .gitignore
+└── README.md
+```
 
 ## Author
 
-**Aarush Nag**, B.Tech in Electronics and Computer Engineering, Manipal Academy of Higher Education
-[LinkedIn](https://linkedin.com/in/aarush-nag) | aarushnag27@gmail.com
+**Aarush Nag**
+
+B.Tech in Electronics and Computer Engineering, Manipal Academy of Higher Education
+
+[LinkedIn](https://linkedin.com/in/aarush-nag)
