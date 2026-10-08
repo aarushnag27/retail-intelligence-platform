@@ -122,7 +122,38 @@ def get_inventory(db:Session=Depends(get_db)):
         )
         result.append(inventory_item)
     return result
+
+@app.get("/transactions")
+def get_transactions(db: Session = Depends(get_db)):
+    transactions = db.query(models.Transaction).all()
+    result=[]
     
+    for transaction_record in transactions:
+        transaction_items = db.query(models.TransactionItem).filter(
+        models.TransactionItem.transaction_id == transaction_record.transaction_id
+        ).all()
+        items_data = []
+
+        for item_record in transaction_items:
+            product_record = db.query(models.Product).filter(
+            models.Product.id == item_record.product_id
+            ).first()
+            item_data = {
+            "product_name": product_record.name,
+            "quantity": item_record.quantity,
+            "price": item_record.price
+            }
+            items_data.append(item_data)
+        
+        transaction_data = {
+        "transaction_id": transaction_record.transaction_id,
+        "total": transaction_record.total,
+        "sold_at": transaction_record.sold_at,
+        "items": items_data
+}
+
+        result.append(transaction_data)
+    return result   
     
     
         
