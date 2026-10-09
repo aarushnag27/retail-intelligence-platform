@@ -1,6 +1,7 @@
 from fastapi import FastAPI, Depends, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.orm import Session
+from sqlalchemy import func, extract, Date
 from database import engine, Base, get_db
 import models
 from schemas import ProductCreate, CheckoutRequest, InventoryResponse
@@ -153,8 +154,84 @@ def get_transactions(db: Session = Depends(get_db)):
 }
 
         result.append(transaction_data)
-    return result   
+    return result
+
+@app.get("/analytics/sales")
+def get_sales_analytics(db: Session = Depends(get_db)):
+    total_revenue = db.query(
+        func.sum(models.Transaction.total)
+    ).scalar()
+
+    total_transactions = db.query(
+        func.count(models.Transaction.transaction_id)
+    ).scalar()
+
+    total_units_sold = db.query(
+    func.sum(models.TransactionItem.quantity)
+    ).scalar()
+
+    top_products = db.query(
+    models.Product.id,
+    models.Product.name,
+    func.sum(models.TransactionItem.quantity).label("units_sold")
+    ).join(
+    models.TransactionItem,
+    models.Product.id == models.TransactionItem.product_id
+    ).group_by(
+    models.Product.id,
+    models.Product.name
+    ).order_by(
+    func.sum(models.TransactionItem.quantity).desc()).limit(5).all()
+
+    top_products_data = []
+
+    for product_id, product_name, units_sold in top_products:
+        top_products_data.append({
+            "product_id": product_id,
+            "product_name": product_name,
+            "units_sold": units_sold
+    })
+
+    hourly_sales = db.query(
+    extract("hour", models.Transaction.sold_at),
+    func.sum(models.Transaction.total).label("revenue")
+    ).group_by(
+    extract("hour", models.Transaction.sold_at)
+    ).order_by(
+    extract("hour", models.Transaction.sold_at)
+        ).all()
+
+    hourly_sales_data = []
+
+    for hour, revenue in hourly_sales:
+        hourly_sales_data.append({
+        "hour": hour,
+        "revenue": revenue
+    })
+
+    daily_sales = db.query(
+    models.Transaction.sold_at.cast(Date),
+    func.sum(models.Transaction.total).label("revenue")
+    ).group_by(
+    models.Transaction.sold_at.cast(Date)
+    ).order_by( models.Transaction.sold_at.cast(Date)).all()
+
+    daily_sales_data = []
+
+    for date, revenue in daily_sales:
+        daily_sales_data.append({
+        "date": date,
+        "revenue": revenue
+    })
     
+    return {
+        "total_revenue": total_revenue,
+        "total_transactions": total_transactions,
+        "total_units_sold": total_units_sold,
+        "top_products": top_products_data,
+        "hourly_sales": hourly_sales_data,
+        "daily_sales": daily_sales_data
+    }    
     
         
             
