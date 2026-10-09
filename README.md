@@ -2,7 +2,7 @@
 
 A full-stack retail operations and intelligence platform designed to help stores move beyond basic transaction and inventory tracking toward data-driven demand forecasting and operational decision-making.
 
-**Status:** In Progress. The retail foundation and synthetic sales-data pipeline are working; the intelligence layer is being built on top, starting with sales analytics.
+**Status:** In Progress. The retail foundation, synthetic sales-data pipeline, and sales analytics are working; demand forecasting and the decision layer are being built on top.
 
 **Stack:** React · TypeScript · Vite · FastAPI · SQLAlchemy · PostgreSQL
 
@@ -23,7 +23,7 @@ The platform is built around turning raw retail activity into an operational fee
 
 It combines transaction history, inventory state, time-based demand patterns, and forecasting to identify upcoming risks and recommend operational actions.
 
-The current system provides the transactional and inventory foundation for this approach, while the intelligence layer is being developed on top of it.
+The current system provides the transactional, inventory, and sales-analytics foundation for this approach, while forecasting and the decision layer are being developed on top of it.
 
 ## Current Status
 
@@ -34,7 +34,7 @@ The current system provides the transactional and inventory foundation for this 
 | Transactional checkout with stock validation and rollback | Working |
 | Low-stock detection | Working |
 | Synthetic historical sales-data pipeline | Working |
-| Sales analytics | In development |
+| Sales analytics (revenue, transactions, units sold, top products, hourly and daily sales) | Working |
 | Demand forecasting | Planned |
 | Decision engine | Planned |
 | Operations assistant | Planned |
@@ -64,6 +64,7 @@ Screenshots will be added as the customer and staff interfaces are polished.
 - Stock validation and inventory deduction
 - Transaction history retrieval
 - Synthetic historical sales-data generation
+- Sales analytics computed from transaction data (see [Sales Analytics](#sales-analytics))
 
 ## How It Works
 
@@ -88,9 +89,9 @@ flowchart LR
     Decisions --> Assistant["Operations Assistant"]
 ```
 
-**Built today:** Customer and staff workflows, transactional checkout, inventory management, transaction history, and synthetic historical sales data.
+**Built today:** Customer and staff workflows, transactional checkout, inventory management, transaction history, synthetic historical sales data, and sales analytics.
 
-**In development / planned:** Sales analytics → Demand forecasting → Decision engine → Operations assistant.
+**In development / planned:** Demand forecasting → Decision engine → Operations assistant.
 
 ## Data Model
 
@@ -122,6 +123,21 @@ The generated data models:
 - Variable transaction basket sizes
 
 > **Note:** This data is synthetic. It is used to develop and test sales analytics and forecasting and does not represent a real store.
+
+## Sales Analytics
+
+Sales analytics are computed from the existing `transactions` and `transaction_items` tables using FastAPI, SQLAlchemy, and PostgreSQL. The analytics provide:
+
+- Total revenue
+- Total number of transactions
+- Total units sold
+- Top-selling products
+- Sales by hour
+- Daily sales
+
+The current development dataset contains 25 products, 2,934 transactions, 5,681 transaction line items, and 30 days of synthetic historical sales data.
+
+> **Note:** These figures come from the synthetic dataset, so they demonstrate the analytics pipeline rather than the results of a real store.
 
 ## Technology Stack
 
@@ -205,13 +221,16 @@ From the project root:
 backend\.venv\Scripts\python.exe backend\seed_demo_data.py --write --seed 42 --days 30
 ```
 
-The generated sales data is stored in PostgreSQL and is used to develop the sales analytics and future forecasting components.
+The generated sales data is stored in PostgreSQL and is used by the sales analytics and will be used to develop the forecasting components.
 
 ## Roadmap
 
+### Completed
+
+- [x] Sales analytics
+
 ### In Progress
 
-- [ ] Sales analytics
 - [ ] Demand pattern analysis by product and time of day
 
 ### Up Next
