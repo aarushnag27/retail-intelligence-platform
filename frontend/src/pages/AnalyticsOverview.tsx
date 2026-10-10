@@ -10,18 +10,18 @@ function AnalyticsOverview({
   total_units_sold,
 }: AnalyticsOverviewProps) {
   return (
-    <div>
-      <div>
+    <div className="analytics-overview">
+      <div className="analytics-kpi analytics-kpi--revenue">
         <h3>Total Revenue</h3>
         <p>₹{total_revenue}</p>
       </div>
 
-      <div>
+      <div className="analytics-kpi analytics-kpi--transactions">
         <h3>Total Transactions</h3>
         <p>{total_transactions}</p>
       </div>
         
-      <div>
+      <div className="analytics-kpi analytics-kpi--units">
         <h3>Total Units Sold</h3>
         <p>{total_units_sold}</p>
       </div>

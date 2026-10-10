@@ -3,6 +3,7 @@ import AnalyticsOverview from "./AnalyticsOverview";
 import TopProducts from "./TopProducts";
 import HourlySalesChart from "./HourlySalesChart";
 import DailySalesChart from "./DailySalesChart";
+import "./SalesAnalytics.css";
 type TopProduct = {
   product_id: number;
   product_name: string;
@@ -53,11 +54,11 @@ function SalesAnalyticsPage() {
   }, []);
 
   if (loading) {
-  return <p>Loading analytics...</p>;
+  return <p className="sales-analytics-status">Loading analytics...</p>;
 }
 
 if (error) {
-  return <p>Error: {error}</p>;
+  return <p className="sales-analytics-status sales-analytics-status--error">Error: {error}</p>;
 }
 if (!analytics) {
   return null;
@@ -65,8 +66,12 @@ if (!analytics) {
 
 
  return (
-  <>
-    <h1>Sales Analytics</h1>
+  <main className="sales-analytics">
+    <header className="analytics-header">
+      <p className="analytics-eyebrow">Retail performance</p>
+      <h1>Sales Analytics</h1>
+      <p className="analytics-description">An overview of your sales, best-selling products, and revenue trends.</p>
+    </header>
 
     <AnalyticsOverview
       total_revenue={analytics.total_revenue}
@@ -77,7 +82,7 @@ if (!analytics) {
     <TopProducts products={analytics.top_products} />
     <HourlySalesChart sales={analytics.hourly_sales} />
     <DailySalesChart sales={analytics.daily_sales} />
-  </>
+  </main>
 );
 }
 

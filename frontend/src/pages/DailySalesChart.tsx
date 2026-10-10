@@ -20,8 +20,10 @@ type DailySalesChartProps = {
 
 function DailySalesChart({ sales }: DailySalesChartProps) {
   return (
-    <div>
+    <div className="analytics-card analytics-chart analytics-daily">
       <h2>Sales by Day</h2>
+      <p className="analytics-card-description">Daily revenue trends</p>
+      <div className="analytics-chart-frame">
       <ResponsiveContainer width="100%" height={300}>
       <LineChart data={sales}>
       <XAxis dataKey="date" />
@@ -31,6 +33,7 @@ function DailySalesChart({ sales }: DailySalesChartProps) {
       <Line type="monotone" dataKey="revenue" />
       </LineChart>
       </ResponsiveContainer>
+      </div>
       </div>
   );
 }

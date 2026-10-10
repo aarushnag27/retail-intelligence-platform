@@ -21,8 +21,10 @@ type HourlySalesChartProps = {
 
 function HourlySalesChart({ sales }: HourlySalesChartProps) {
     return (
-  <div>
+  <div className="analytics-card analytics-chart analytics-hourly">
     <h2>Sales by Hour</h2>
+    <p className="analytics-card-description">Revenue across the hours of the day</p>
+    <div className="analytics-chart-frame">
     <ResponsiveContainer width="100%" height={300}>
     <LineChart data={sales}>
     <XAxis dataKey="hour" />
@@ -32,6 +34,7 @@ function HourlySalesChart({ sales }: HourlySalesChartProps) {
     <Line type="monotone" dataKey="revenue" />
     </LineChart>
     </ResponsiveContainer>
+    </div>
     
     </div>
     );
