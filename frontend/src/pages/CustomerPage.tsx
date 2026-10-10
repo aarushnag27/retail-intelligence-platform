@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react"
+import "./RetailPages.css"
 type Product = {
   id: number
   name: string
@@ -158,25 +159,42 @@ const cartTotal = cart.reduce((total, item) => {
 }, 0)
 
   return (
-  <div>
-    <h1>Retail Intelligence Platform</h1>
+  <main className="retail-page customer-page">
+    <header className="retail-header">
+      <p className="retail-eyebrow">Retail Intelligence Platform</p>
+      <h1>Customer Checkout</h1>
+      <p className="retail-description">Browse products, build your cart, and complete your purchase.</p>
+    </header>
+
+    <section className="retail-catalog" aria-labelledby="products-heading">
+      <div className="retail-section-heading">
+        <h2 id="products-heading">Products</h2>
+        <p className="retail-description">Choose products to add to your cart.</p>
+      </div>
+      <div className="retail-product-grid">
 
     {products.map(product => (
-      <div key={product.id}>
-        <p>
-          {product.name} - ₹{product.price}
-        </p>
+      <div className="retail-card retail-product" key={product.id}>
+        <h3>{product.name}</h3>
+        <p className="retail-price">₹{product.price}</p>
 
-        <button onClick={() => addToCart(product.id)}>
+        <button className="retail-button retail-button--secondary" onClick={() => addToCart(product.id)}>
           Add to Cart
         </button>
         {stockMessages[product.id] && (
-          <p role="status">{stockMessages[product.id]}</p>
+          <p className="retail-message retail-message--error" role="status">{stockMessages[product.id]}</p>
         )}
       </div>
     ))}
+      </div>
+    </section>
 
-    <h2>Cart</h2>
+    <section className="retail-card retail-checkout" aria-labelledby="cart-heading">
+      <div className="retail-section-heading">
+        <p className="retail-eyebrow">Current order</p>
+        <h2 id="cart-heading">Cart</h2>
+      </div>
+      <div className="retail-cart-items">
 
    {cart.map(item => {
   const product = getProduct(item.product_id)
@@ -188,30 +206,35 @@ const cartTotal = cart.reduce((total, item) => {
   
 
   return (
-    <div key={item.product_id}>
-      <p>
-        {product.name} - ₹{product.price} - Quantity: {item.quantity}
-      </p>
+    <div className="retail-cart-item" key={item.product_id}>
+      <div className="retail-cart-details">
+        <h3>{product.name}</h3>
+        <p className="retail-description">₹{product.price} · Quantity: {item.quantity}</p>
+      </div>
 
-      <button onClick={() => updateQuantity(item.product_id, -1)}>
+      <div className="retail-quantity-controls">
+      <button className="retail-button retail-quantity-button" aria-label={`Decrease quantity of ${product.name}`} onClick={() => updateQuantity(item.product_id, -1)}>
         -
       </button>
 
-      <button onClick={() => updateQuantity(item.product_id, 1)}>
+      <button className="retail-button retail-quantity-button" aria-label={`Increase quantity of ${product.name}`} onClick={() => updateQuantity(item.product_id, 1)}>
         +
       </button>
+      </div>
     </div>
   )
 })}
-<p>Cart Total: ₹{cartTotal}</p>
+      </div>
+<p className="retail-cart-total"><span>Cart Total</span><strong>₹{cartTotal}</strong></p>
 
-<button onClick={checkout}>
+<button className="retail-button retail-button--primary" onClick={checkout}>
   Checkout
 </button>
-{checkoutMessage && <p>{checkoutMessage}</p>}
+{checkoutMessage && <p className="retail-message">{checkoutMessage}</p>}
 
 
-  </div>
+    </section>
+  </main>
 )
   }
 

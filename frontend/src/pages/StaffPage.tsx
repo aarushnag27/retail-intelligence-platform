@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import "./RetailPages.css";
 
 type InventoryItem = {
   id: number;
@@ -29,18 +30,28 @@ useEffect(() => {
     });
 }, []);
  return (
-  <>
-    <h1>Staff Dashboard</h1>
+  <main className="retail-page staff-page">
+    <header className="retail-header">
+      <p className="retail-eyebrow">Store operations</p>
+      <h1>Staff Dashboard</h1>
+      <p className="retail-description">Monitor inventory levels and product availability.</p>
+    </header>
 
-    {error && <p>{error}</p>}
-    {loading && <p>Loading inventory...</p>}
+    {error && <p className="retail-message retail-message--error">{error}</p>}
+    {loading && <p className="retail-message">Loading inventory...</p>}
 
-    <table>
+    <section className="retail-card retail-inventory" aria-labelledby="inventory-heading">
+      <div className="retail-section-heading">
+        <h2 id="inventory-heading">Inventory</h2>
+        <p className="retail-description">Current stock and status for each product.</p>
+      </div>
+      <div className="retail-table-scroll">
+    <table className="retail-table" aria-labelledby="inventory-heading">
       <thead>
         <tr>
-          <th>Product</th>
-          <th>Stock</th>
-          <th>Status</th>
+          <th scope="col">Product</th>
+          <th scope="col">Stock</th>
+          <th scope="col">Status</th>
         </tr>
       </thead>
 
@@ -48,13 +59,15 @@ useEffect(() => {
         {inventory.map((item) => (
           <tr key={item.id}>
             <td>{item.name}</td>
-            <td>{item.stock}</td>
-            <td>{item.status}</td>
+            <td className="retail-stock">{item.stock}</td>
+            <td><span className="retail-status" data-status={item.status}>{item.status}</span></td>
           </tr>
         ))}
       </tbody>
     </table>
-  </>
+      </div>
+    </section>
+  </main>
 );
 }
 

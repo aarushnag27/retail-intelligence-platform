@@ -26,7 +26,7 @@ def root():
 
 @app.get("/products")
 def get_products(db: Session = Depends(get_db)):
-    products = db.query(models.Product).all()
+    products = db.query(models.Product).order_by(models.Product.name.asc()).all()
     return products
     
 
@@ -108,7 +108,7 @@ def get_inventory(db:Session=Depends(get_db)):
         models.Product.id,
         models.Product.name,
         models.Product.stock
-        ).all()
+        ).order_by(models.Product.name.asc()).all()
     for item in inventory:
         if item.stock<=LOW_STOCK_THRESHOLD:
             status="LOW"
